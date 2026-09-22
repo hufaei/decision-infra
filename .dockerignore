@@ -1,0 +1,11 @@
+.git
+.models
+.venv
+coverage
+dist
+node_modules
+outputs
+work
+__pycache__
+*.pyc
+*.egg-info

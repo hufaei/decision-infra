@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "models": [
+    {
+      "id": "jev-latest",
+      "provider": "jev",
+      "runtime": "https",
+      "source": "https://api.typesafe.ai/v1/systemone",
+      "license": "TypeSafe service terms",
+      "download": null
+    },
+    {
+      "id": "reflex-qwen3.5-4b",
+      "provider": "reflex",
+      "runtime": "python-cuda",
+      "source": "https://github.com/kshetrajna12/reflex",
+      "sourceRevision": "19586a1374dca138eddf5d7b8889cae8dfa505f6",
+      "license": "MIT; model weights Apache-2.0",
+      "download": {
+        "kind": "huggingface",
+        "repo": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a"
+      }
+    },
+    {
+      "id": "semif-qwen3.5-4b",
+      "provider": "semif",
+      "runtime": "python-accelerator",
+      "source": "https://github.com/TheoLeeCJ/Semif",
+      "sourceRevision": "1f2dea3e25379f9dfc98cb83c324f00ab5deda37",
+      "license": "MIT; model weights Apache-2.0",
+      "download": {
+        "kind": "huggingface",
+        "repo": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a"
+      }
+    },
+    {
+      "id": "laya-multilingual",
+      "provider": "laya",
+      "runtime": "python-accelerator",
+      "source": "https://github.com/NandhaKishorM/laya",
+      "sourceRevision": "573e5b62696ba441230cd6be71d593331b5d23af",
+      "license": "Apache-2.0",
+      "download": {
+        "kind": "huggingface",
+        "repo": "convaiinnovations/laya-multilingual",
+        "revision": "052592a15d198d9ad47da779604259b10b47b7aa"
+      }
+    }
+  ]
+}

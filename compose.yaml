@@ -1,0 +1,76 @@
+name: decision-infra
+
+services:
+  gateway:
+    build: .
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8080
+      TYPESAFE_API_KEY: ${TYPESAFE_API_KEY:-}
+      REFLEX_BASE_URL: http://reflex:8000/v1/systemone
+      SEMIF_BASE_URL: http://semif:8000/v1/systemone
+      LAYA_BASE_URL: http://laya:8000/v1/systemone
+      DECISION_DEFAULT_MODEL: ${DECISION_DEFAULT_MODEL:-}
+    ports:
+      - 127.0.0.1:8080:8080
+
+  laya:
+    profiles: [laya]
+    build:
+      context: .
+      dockerfile: services/laya/Dockerfile
+    command:
+      - uv
+      - run
+      - --no-sync
+      - laya-systemone
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --device
+      - ${LAYA_DEVICE:-cpu}
+    environment:
+      HF_HOME: /models/huggingface
+    ports:
+      - 127.0.0.1:8010:8000
+    volumes:
+      - huggingface-cache:/models/huggingface
+
+  reflex:
+    profiles: [reflex]
+    build: services/reflex
+    environment:
+      HF_HOME: /models/huggingface
+    gpus: all
+    ports:
+      - 127.0.0.1:8008:8000
+    volumes:
+      - huggingface-cache:/models/huggingface
+
+  semif:
+    profiles: [semif]
+    build:
+      context: .
+      dockerfile: services/semif/Dockerfile
+    command:
+      - uv
+      - run
+      - --no-sync
+      - semif-systemone
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --device
+      - ${SEMIF_DEVICE:-cuda}
+    environment:
+      HF_HOME: /models/huggingface
+    gpus: all
+    ports:
+      - 127.0.0.1:8009:8000
+    volumes:
+      - huggingface-cache:/models/huggingface
+
+volumes:
+  huggingface-cache:
