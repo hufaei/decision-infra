@@ -170,10 +170,14 @@ export class JevProvider extends HttpDecisionProvider {
     super(jevHttpOptions(options));
   }
 
-  override decide(request: DecisionRequest): Promise<DecisionResponse> {
-    return super.decide(
+  override async decide(request: DecisionRequest): Promise<DecisionResponse> {
+    const response = await super.decide(
       request.model === undefined ? { ...request, model: this.id } : request,
     );
+    // TypeSafe may expose the resolved release (for example jev-1.13.0) in its
+    // response.  The gateway contract reports the stable route selected by the
+    // application, so provider implementation details do not leak across this boundary.
+    return { ...response, model: this.id };
   }
 }
 

@@ -70,6 +70,19 @@ describe("JevProvider", () => {
     );
   });
 
+  it("normalizes an upstream release name to the stable gateway route", async () => {
+    const fetch = vi.fn(async () =>
+      new Response(JSON.stringify({ ...response, model: "jev-1.13.0" }), {
+        status: 200,
+      }),
+    );
+    const provider = new JevProvider({ apiKey: "secret-key", fetch });
+
+    await expect(provider.decide(request)).resolves.toMatchObject({
+      model: "jev-latest",
+    });
+  });
+
   it.each([
     {
       label: "non-success status",
