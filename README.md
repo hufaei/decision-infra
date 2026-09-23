@@ -69,6 +69,27 @@ curl http://127.0.0.1:8080/v1/systemone \
 > [!NOTE]
 > `pnpm gateway` 和 Docker Compose 都会读取项目根目录的 `.env`；shell/系统中已经存在的环境变量优先，不会被 `.env` 覆盖。`.env` 已被 Git 忽略，`.env.example` 只保存无密钥模板。
 
+### 接入 macOS QQ 分析应用
+
+[`jev-qq-analyst`](https://github.com/hufaei/jev-qq-analyst) 是本仓库的一个消费方。先按上面的步骤启动 Decision Infra，并用上面的 `curl` 决策请求确认 `jev-latest` 可用，再启动 QQ 应用。若希望把 key 留在 infra 的本地配置中，在本仓库根目录创建 `.env`，只需加入：
+
+```dotenv
+TYPESAFE_API_KEY=替换为你的密钥
+```
+
+QQ 应用默认连接 `http://127.0.0.1:8080`，并在每次请求中显式指定 `jev-latest`。只有网关进程需要 `TYPESAFE_API_KEY`；QQ 应用无需保存 Provider key。若网关使用了其他地址，在 QQ 应用中设置 `DECISION_INFRA_BASE_URL`；`DECISION_INFRA_MODEL` 默认是 `jev-latest`。QQ 应用的安装、辅助功能授权与消息读取步骤见其 [README](https://github.com/hufaei/jev-qq-analyst#readme)。
+
+连接不通时，先用 `curl http://127.0.0.1:8080/healthz` 检查网关进程，再运行上面的真实决策请求。`/healthz` 返回 `{"status":"ok"}` 不能证明 Jev 已注册或上游可用。
+
+| 现象 | 检查位置 |
+|---|---|
+| 无法连接 `127.0.0.1:8080` | 确认网关正在运行，以及 QQ 配置的地址与网关 `HOST`/`PORT` 一致。 |
+| `404 unknown_model`，模型为 `jev-latest` | 确认 `TYPESAFE_API_KEY` 已进入 **网关进程**，再重启网关；未配置 key 时该路由不会注册。 |
+| `503 provider_unavailable` | 网关已选中模型，但连接上游失败或超时；检查网络与上游服务状态。 |
+| `provider_http_error` | 上游拒绝请求；查看响应中的 `status`，检查 key、账号权限或上游请求限制。 |
+
+错误格式和其他状态码见 [API contract](docs/api.md#gateway-errors)。显式选择 `jev-latest` 时，网关不会在故障后改用本地模型。
+
 ## 选择模型
 
 | 路由 ID | Contract 能力 | 运行位置 | 适合什么 |
